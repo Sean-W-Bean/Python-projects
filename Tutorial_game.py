@@ -22,13 +22,15 @@ SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 600
 SPEED = 5
 SCORE = 0
+
+
  
 #Setting up Fonts
 font = pygame.font.SysFont("Verdana", 60)
 font_small = pygame.font.SysFont("Verdana", 20)
 game_over = font.render("Game Over", True, BLACK)
  
-background = pygame.image.load("AnimatedStreet.png")
+background = pygame.image.load("träd.png")
  
 #Create a white screen 
 DISPLAYSURF = pygame.display.set_mode((400,600))
@@ -45,7 +47,7 @@ class Enemy(pygame.sprite.Sprite):
       def move(self):
         global SCORE
         self.rect.move_ip(0,SPEED)
-        if (self.rect.top > 600):
+        if pygame.sprite.spritecollideany(P1, enemies):
             SCORE += 1
             self.rect.top = 0
             self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
@@ -54,7 +56,7 @@ class Enemy(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__() 
-        self.image = pygame.image.load("Player.png")
+        self.image = pygame.image.load("Figur.png")
         self.rect = self.image.get_rect()
         self.rect.center = (160, 520)
         
@@ -67,10 +69,10 @@ class Player(pygame.sprite.Sprite):
          
         if self.rect.left > 0:
               if pressed_keys[K_LEFT]:
-                  self.rect.move_ip(-5, 0)
+                  self.rect.move_ip(-10, 0)
         if self.rect.right < SCREEN_WIDTH:        
               if pressed_keys[K_RIGHT]:
-                  self.rect.move_ip(5, 0)
+                  self.rect.move_ip(10, 0)
                    
 #Setting up Sprites        
 P1 = Player()
@@ -106,21 +108,26 @@ while True:
     for entity in all_sprites:
         DISPLAYSURF.blit(entity.image, entity.rect)
         entity.move()
+
+    
+    bottom_rect = pygame.Rect(0, SCREEN_HEIGHT - 50, SCREEN_WIDTH, 50)
  
     #To be run if collision occurs between Player and Enemy
-    if pygame.sprite.spritecollideany(P1, enemies):
-          pygame.mixer.Sound('crash.wav').play()
-          time.sleep(0.5)
-                    
-          DISPLAYSURF.fill(RED)
-          DISPLAYSURF.blit(game_over, (30,250))
+    for enemy in enemies:
+        if enemy.rect.colliderect(bottom_rect):
+            pygame.mixer.Sound('crash.wav').play()
+            time.sleep(0.5)
+
+            DISPLAYSURF.fill(RED)
+            DISPLAYSURF.blit(game_over, (30,250))
+
            
-          pygame.display.update()
-          for entity in all_sprites:
+            pygame.display.update()
+            for entity in all_sprites:
                 entity.kill() 
-          time.sleep(2)
-          pygame.quit()
-          sys.exit()        
+            time.sleep(2)
+            pygame.quit()
+            sys.exit()        
          
     pygame.display.update()
     FramePerSec.tick(FPS)
