@@ -36,7 +36,9 @@ background = pygame.image.load("träd.png")
 DISPLAYSURF = pygame.display.set_mode((400,600))
 DISPLAYSURF.fill(WHITE)
 pygame.display.set_caption("Game")
- 
+
+
+#Create enemy class
 class Enemy(pygame.sprite.Sprite):
       def __init__(self):
         super().__init__() 
@@ -44,6 +46,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (random.randint(40, SCREEN_WIDTH-40), 0)  
  
+      #set up scoreboard and score parameters
       def move(self):
         global SCORE
         self.rect.move_ip(0,SPEED)
@@ -52,13 +55,13 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.top = 0
             self.rect.center = (random.randint(40, SCREEN_WIDTH - 40), 0)
  
- 
+ #set up player class
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__() 
         self.image = pygame.image.load("applecatch1.png")
         self.rect = self.image.get_rect()
-        self.rect.center = (160, 513)
+        self.rect.center = (160, 520)
         
     def move(self):
         pressed_keys = pygame.key.get_pressed()
@@ -112,7 +115,7 @@ while True:
     
     bottom_rect = pygame.Rect(0, SCREEN_HEIGHT - 50, SCREEN_WIDTH, 50)
  
-    #To be run if collision occurs between Player and Enemy
+    #To be run if collision occurs between enemies and the ground
     for enemy in enemies:
         if enemy.rect.colliderect(bottom_rect):
             pygame.mixer.Sound('crash.wav').play()
